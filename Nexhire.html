@@ -1,0 +1,2238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JobPortal — Recruitment Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #080b12;
+      --surface: #0e1320;
+      --card: #131926;
+      --card2: #171e2e;
+      --border: #1e2840;
+      --border2: #263050;
+      --accent: #3b82f6;
+      --accent-h: #2563eb;
+      --accent-g: #06b6d4;
+      --green: #10b981;
+      --green-h: #059669;
+      --red: #ef4444;
+      --red-h: #dc2626;
+      --amber: #f59e0b;
+      --text: #e2e8f0;
+      --text2: #94a3b8;
+      --text3: #4b5563;
+      --mono: 'JetBrains Mono', monospace;
+      --sans: 'Plus Jakarta Sans', sans-serif;
+      --sidebar-w: 220px;
+      --header-h: 56px;
+      --radius: 10px;
+      --radius-sm: 6px;
+      --shadow: 0 4px 24px rgba(0, 0, 0, .4);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      display: flex;
+      overflow: hidden;
+      font-size: 14px;
+    }
+
+    /* ─── SIDEBAR ─── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 50;
+      flex-shrink: 0;
+    }
+
+    .sidebar-logo {
+      padding: 0 20px;
+      height: var(--header-h);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .logo-icon {
+      width: 30px;
+      height: 30px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-g));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .logo-text {
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: -.3px;
+    }
+
+    .logo-text span {
+      color: var(--accent);
+    }
+
+    .sidebar-section-label {
+      font-size: 10px;
+      font-family: var(--mono);
+      letter-spacing: 1.2px;
+      color: var(--text3);
+      padding: 20px 20px 6px;
+      text-transform: uppercase;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 20px;
+      margin: 1px 8px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all .15s;
+      color: var(--text2);
+      font-weight: 600;
+      font-size: 13px;
+      border: none;
+      background: none;
+      width: calc(100% - 16px);
+      text-align: left;
+    }
+
+    .nav-item:hover {
+      background: var(--card);
+      color: var(--text);
+    }
+
+    .nav-item.active {
+      background: rgba(59, 130, 246, .15);
+      color: var(--accent);
+    }
+
+    .nav-item.active .nav-icon {
+      color: var(--accent);
+    }
+
+    .nav-icon {
+      font-size: 15px;
+      width: 18px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      background: var(--border);
+      color: var(--text2);
+      font-size: 10px;
+      font-family: var(--mono);
+      padding: 1px 6px;
+      border-radius: 10px;
+    }
+
+    .nav-item.active .nav-badge {
+      background: rgba(59, 130, 246, .25);
+      color: var(--accent);
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--text3);
+      font-family: var(--mono);
+    }
+
+    /* ─── MAIN CONTENT ─── */
+    .main-wrap {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ─── TOP BAR ─── */
+    .topbar {
+      height: var(--header-h);
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 28px;
+      gap: 14px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+
+    .topbar-title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -.2px;
+    }
+
+    .topbar-subtitle {
+      font-size: 11px;
+      color: var(--text2);
+      font-family: var(--mono);
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: var(--border);
+      color: var(--accent-g);
+      letter-spacing: .5px;
+    }
+
+    .topbar-spacer {
+      flex: 1;
+    }
+
+    .topbar-search {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 12px;
+      width: 240px;
+      transition: border .15s;
+    }
+
+    .topbar-search:focus-within {
+      border-color: var(--accent);
+    }
+
+    .topbar-search input {
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 13px;
+      flex: 1;
+      width: 100%;
+    }
+
+    .topbar-search input::placeholder {
+      color: var(--text3);
+    }
+
+    .search-ico {
+      color: var(--text3);
+      font-size: 13px;
+    }
+
+    /* ─── PAGE BODY ─── */
+    .page-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px 28px;
+      background: var(--bg);
+    }
+
+    .page-body::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .page-body::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .page-body::-webkit-scrollbar-thumb {
+      background: var(--border2);
+      border-radius: 4px;
+    }
+
+    /* ─── SECTION ─── */
+    .section {
+      display: none;
+      animation: fadeIn .2s ease;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    /* ─── PAGE HEADER ─── */
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 22px;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    /*.page-header-left {}*/
+    .page-title {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -.4px;
+    }
+
+    .page-desc {
+      font-size: 12px;
+      color: var(--text2);
+      margin-top: 3px;
+    }
+
+    .page-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: nowrap;
+    }
+
+    /* ─── STAT CARDS ─── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+    }
+
+    .stat-card.blue::before {
+      background: var(--accent);
+    }
+
+    .stat-card.green::before {
+      background: var(--green);
+    }
+
+    .stat-card.amber::before {
+      background: var(--amber);
+    }
+
+    .stat-card.cyan::before {
+      background: var(--accent-g);
+    }
+
+    .stat-label {
+      font-size: 10px;
+      font-family: var(--mono);
+      letter-spacing: .8px;
+      color: var(--text2);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 26px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .stat-value.blue {
+      color: var(--accent);
+    }
+
+    .stat-value.green {
+      color: var(--green);
+    }
+
+    .stat-value.amber {
+      color: var(--amber);
+    }
+
+    .stat-value.cyan {
+      color: var(--accent-g);
+    }
+
+    .stat-icon {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 22px;
+      opacity: .12;
+    }
+
+    /* ─── BUTTONS ─── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      border: none;
+      font-family: var(--sans);
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all .15s;
+      letter-spacing: .1px;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-h);
+    }
+
+    .btn-success {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .btn-success:hover {
+      background: var(--green-h);
+    }
+
+    .btn-danger {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .btn-danger:hover {
+      background: var(--red-h);
+    }
+
+    .btn-ghost {
+      background: var(--card2);
+      color: var(--text2);
+      border: 1px solid var(--border2);
+    }
+
+    .btn-ghost:hover {
+      color: var(--text);
+      border-color: var(--border2);
+      background: var(--card);
+    }
+
+    .btn-sm {
+      padding: 5px 10px;
+      font-size: 12px;
+      gap: 4px;
+    }
+
+    .btn-icon {
+      padding: 5px 8px;
+    }
+
+    /* ─── TABLE ─── */
+    .table-wrap {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .table-inner {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      min-width: 600px;
+    }
+
+    thead tr {
+      background: var(--card2);
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      padding: 11px 14px;
+      text-align: left;
+      color: var(--text2);
+      font-family: var(--mono);
+      font-size: 10.5px;
+      letter-spacing: .7px;
+      font-weight: 500;
+      white-space: nowrap;
+      text-transform: uppercase;
+    }
+
+    td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: middle;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr {
+      transition: background .1s;
+    }
+
+    tbody tr:hover {
+      background: rgba(59, 130, 246, .04);
+    }
+
+    .td-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    /* ─── BADGES ─── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 9px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .3px;
+      font-family: var(--mono);
+      white-space: nowrap;
+    }
+
+    .badge-blue {
+      background: rgba(59, 130, 246, .15);
+      color: #60a5fa;
+    }
+
+    .badge-green {
+      background: rgba(16, 185, 129, .15);
+      color: #34d399;
+    }
+
+    .badge-red {
+      background: rgba(239, 68, 68, .15);
+      color: #f87171;
+    }
+
+    .badge-amber {
+      background: rgba(245, 158, 11, .15);
+      color: #fbbf24;
+    }
+
+    .badge-gray {
+      background: var(--border);
+      color: var(--text2);
+    }
+
+    .badge-cyan {
+      background: rgba(6, 182, 212, .15);
+      color: #22d3ee;
+    }
+
+    /* ─── MODAL ─── */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .65);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .overlay.open {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--card);
+      border: 1px solid var(--border2);
+      border-radius: 14px;
+      padding: 26px;
+      width: 100%;
+      max-width: 580px;
+      max-height: 92vh;
+      overflow-y: auto;
+      animation: modalIn .2s ease;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, .6);
+    }
+
+    .modal::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .modal::-webkit-scrollbar-thumb {
+      background: var(--border2);
+      border-radius: 2px;
+    }
+
+    @keyframes modalIn {
+      from {
+        transform: translateY(16px) scale(.98);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -.3px;
+    }
+
+    .modal-close {
+      background: var(--card2);
+      border: 1px solid var(--border2);
+      color: var(--text2);
+      width: 30px;
+      height: 30px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .15s;
+    }
+
+    .modal-close:hover {
+      color: var(--text);
+      background: var(--border);
+    }
+
+    /* ─── FORM ─── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .form-grid .full {
+      grid-column: 1 / -1;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 11px;
+      color: var(--text2);
+      font-weight: 700;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+    }
+
+    input,
+    select,
+    textarea {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      border-radius: var(--radius-sm);
+      padding: 9px 12px;
+      font-family: var(--sans);
+      font-size: 13px;
+      outline: none;
+      transition: border .15s;
+      width: 100%;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--accent);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    select option {
+      background: var(--card);
+    }
+
+    .form-divider {
+      grid-column: 1/-1;
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 2px 0;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ─── TOAST ─── */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 400;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+    }
+
+    .toast-item {
+      padding: 11px 18px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      animation: toastSlide .22s ease;
+      min-width: 200px;
+      max-width: 320px;
+      border-left: 3px solid transparent;
+      backdrop-filter: blur(8px);
+      pointer-events: auto;
+    }
+
+    @keyframes toastSlide {
+      from {
+        transform: translateX(30px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .toast-success {
+      background: rgba(16, 185, 129, .18);
+      border-color: var(--green);
+      color: #6ee7b7;
+    }
+
+    .toast-error {
+      background: rgba(239, 68, 68, .18);
+      border-color: var(--red);
+      color: #fca5a5;
+    }
+
+    .toast-info {
+      background: rgba(59, 130, 246, .18);
+      border-color: var(--accent);
+      color: #93c5fd;
+    }
+
+    /* ─── EMPTY STATE ─── */
+    .empty-state {
+      text-align: center;
+      padding: 52px 20px;
+      color: var(--text3);
+    }
+
+    .empty-icon {
+      font-size: 36px;
+      margin-bottom: 12px;
+      opacity: .5;
+    }
+
+    .empty-text {
+      font-size: 13px;
+      font-family: var(--mono);
+    }
+
+    /* ─── CONFIRM MODAL ─── */
+    .confirm-body {
+      color: var(--text2);
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 6px;
+    }
+
+    .confirm-warn {
+      color: var(--red);
+      font-size: 12px;
+      margin-top: 6px;
+      font-family: var(--mono);
+    }
+
+    /* ─── RESPONSIVE HELPERS ─── */
+    .cell-primary {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .cell-mono {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text2);
+    }
+
+    .cell-link {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 12px;
+    }
+
+    .cell-link:hover {
+      text-decoration: underline;
+    }
+
+    /* ─── DASHBOARD OVERVIEW ─── */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .overview-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+    }
+
+    .overview-card-title {
+      font-size: 12px;
+      font-family: var(--mono);
+      letter-spacing: .6px;
+      color: var(--text2);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .overview-card-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .pipeline-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .pipeline-step:last-child {
+      border-bottom: none;
+    }
+
+    .pipeline-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .pipeline-label {
+      font-size: 13px;
+      flex: 1;
+    }
+
+    .pipeline-count {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    /* search bar inside topbar */
+    .current-search {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══════════ SIDEBAR ═══════════ -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">💼</div>
+      <div class="logo-text">Job<span>Portal</span></div>
+    </div>
+
+    <div class="sidebar-section-label">Overview</div>
+    <button class="nav-item active" onclick="showSection('overview',this)">
+      <span class="nav-icon">⬡</span> Dashboard
+    </button>
+
+    <div class="sidebar-section-label">Data Tables</div>
+    <button class="nav-item" onclick="showSection('companies',this)">
+      <span class="nav-icon">🏢</span> Companies
+      <span class="nav-badge" id="nb-companies">0</span>
+    </button>
+    <button class="nav-item" onclick="showSection('candidates',this)">
+      <span class="nav-icon">👤</span> Candidates
+      <span class="nav-badge" id="nb-candidates">0</span>
+    </button>
+    <button class="nav-item" onclick="showSection('jobs',this)">
+      <span class="nav-icon">📋</span> Job Postings
+      <span class="nav-badge" id="nb-jobs">0</span>
+    </button>
+    <button class="nav-item" onclick="showSection('applications',this)">
+      <span class="nav-icon">📄</span> Applications
+      <span class="nav-badge" id="nb-applications">0</span>
+    </button>
+
+    <div class="sidebar-section-label">Recruitment</div>
+    <button class="nav-item" onclick="showSection('interviews',this)">
+      <span class="nav-icon">🗓</span> Interviews
+      <span class="nav-badge" id="nb-interviews">0</span>
+    </button>
+    <button class="nav-item" onclick="showSection('interviewers',this)">
+      <span class="nav-icon">👔</span> Interviewers
+      <span class="nav-badge" id="nb-interviewers">0</span>
+    </button>
+    <button class="nav-item" onclick="showSection('offers',this)">
+      <span class="nav-icon">📬</span> Offers
+      <span class="nav-badge" id="nb-offers">0</span>
+    </button>
+    <button class="nav-item" onclick="showSection('decisions',this)">
+      <span class="nav-icon">✅</span> Hiring Decisions
+      <span class="nav-badge" id="nb-decisions">0</span>
+    </button>
+
+    <div class="sidebar-footer">DB Phase 2 &nbsp;·&nbsp; v2.0</div>
+  </aside>
+
+  <!-- ═══════════ MAIN WRAP ═══════════ -->
+  <div class="main-wrap">
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+      <div>
+        <div class="topbar-title" id="topbar-title">Dashboard</div>
+      </div>
+      <span class="topbar-subtitle" id="topbar-tag">OVERVIEW</span>
+      <div class="topbar-spacer"></div>
+      <div class="topbar-search" id="topbar-search-wrap" style="display:none">
+        <span class="search-ico">🔍</span>
+        <input type="text" id="topbar-search-input" placeholder="Search records…">
+      </div>
+    </div>
+
+    <!-- PAGE BODY -->
+    <div class="page-body">
+
+      <!-- ══════ OVERVIEW / DASHBOARD ══════ -->
+      <div id="sec-overview" class="section active">
+        <div class="stats-grid" id="overview-stats"></div>
+
+        <div class="overview-grid">
+          <div class="overview-card">
+            <div class="overview-card-title">Application Pipeline</div>
+            <div id="pipeline-list"></div>
+          </div>
+          <div class="overview-card">
+            <div class="overview-card-title">Recent Decisions</div>
+            <div id="recent-decisions"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════ COMPANIES ══════ -->
+      <div id="sec-companies" class="section">
+        <div class="page-header">
+          <div class="page-header-left">
+            <div class="page-title">Companies</div>
+            <div class="page-desc">Manage employer organisations</div>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-primary" onclick="openModal('company-modal')">
+              + Add Company
+            </button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <div class="table-inner">
+            <table id="company-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Industry</th>
+                  <th>Location</th>
+                  <th>Website</th>
+                  <th>Founded</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="company-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════ CANDIDATES ══════ -->
+      <div id="sec-candidates" class="section">
+        <div class="page-header">
+          <div class="page-header-left">
+            <div class="page-title">Candidates</div>
+            <div class="page-desc">Applicant profiles and contact info</div>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-primary" onclick="openModal('candidate-modal')">+ Add Candidate</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <div class="table-inner">
+            <table id="candidate-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Address</th>
+                  <th>DOB</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="candidate-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════ JOB POSTINGS ══════ -->
+      <div id="sec-jobs" class="section">
+        <div class="page-header">
+          <div class="page-header-left">
+            <div class="page-title">Job Postings</div>
+            <div class="page-desc">Active and closed positions</div>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-primary" onclick="openModal('job-modal')">+ Add Job</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <div class="table-inner">
+            <table id="job-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Company</th>
+                  <th>Title</th>
+                  <th>Type</th>
+                  <th>Salary Range</th>
+                  <th>Posted</th>
+                  <th>Deadline</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="job-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════ APPLICATIONS ══════ -->
+      <div id="sec-applications" class="section">
+        <div class="page-header">
+          <div class="page-header-left">
+            <div class="page-title">Applications</div>
+            <div class="page-desc">Candidate job applications and statuses</div>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-primary" onclick="openModal('app-modal')">+ Add Application</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <div class="table-inner">
+            <table id="app-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Candidate</th>
+                  <th>Job</th>
+                  <th>Applied</th>
+                  <th>Status</th>
+                  <th>Cover Letter</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="app-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════ INTERVIEWS ══════ -->
+      <div id="sec-interviews" class="section">
+        <div class="page-header">
+          <div class="page-header-left">
+            <div class="page-title">Interviews</div>
+            <div class="page-desc">Scheduled interview sessions</div>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-primary" onclick="openModal('interview-modal')">+ Schedule Interview</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <div class="table-inner">
+            <table id="interview-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Application</th>
+                  <th>Interviewer</th>
+                  <th>Type</th>
+                  <th>Location / Link</th>
+                  <th>Scheduled</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="interview-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════ INTERVIEWERS ══════ -->
+      <div id="sec-interviewers" class="section">
+        <div class="page-header">
+          <div class="page-header-left">
+            <div class="page-title">Interviewers</div>
+            <div class="page-desc">Internal panel members</div>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-primary" onclick="openModal('interviewer-modal')">+ Add Interviewer</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <div class="table-inner">
+            <table id="interviewer-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Company</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Department</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="interviewer-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════ OFFERS ══════ -->
+      <div id="sec-offers" class="section">
+        <div class="page-header">
+          <div class="page-header-left">
+            <div class="page-title">Offers</div>
+            <div class="page-desc">Compensation offers sent to candidates</div>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-primary" onclick="openModal('offer-modal')">+ Create Offer</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <div class="table-inner">
+            <table id="offer-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Application</th>
+                  <th>Salary Offered</th>
+                  <th>Offer Date</th>
+                  <th>Expiry Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="offer-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════ DECISIONS ══════ -->
+      <div id="sec-decisions" class="section">
+        <div class="page-header">
+          <div class="page-header-left">
+            <div class="page-title">Hiring Decisions</div>
+            <div class="page-desc">Final recruitment outcomes</div>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-primary" onclick="openModal('decision-modal')">+ Add Decision</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <div class="table-inner">
+            <table id="decision-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Offer</th>
+                  <th>Decision</th>
+                  <th>Date</th>
+                  <th>Reason</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="decision-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /page-body -->
+  </div><!-- /main-wrap -->
+
+  <!-- ═══════════ MODALS ═══════════ -->
+
+  <!-- Company -->
+  <div class="overlay" id="company-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title" id="company-modal-title">Add Company</span>
+        <button class="modal-close" onclick="closeModal('company-modal')">✕</button>
+      </div>
+      <div class="form-grid">
+        <input type="hidden" id="cm-id">
+        <div class="form-group full"><label>Company Name *</label><input type="text" id="cm-name"
+            placeholder="TechNova Solutions"></div>
+        <div class="form-group"><label>Industry</label><input type="text" id="cm-industry" placeholder="Technology">
+        </div>
+        <div class="form-group"><label>Location</label><input type="text" id="cm-location"
+            placeholder="Karachi, Pakistan"></div>
+        <div class="form-group"><label>Website</label><input type="text" id="cm-website"
+            placeholder="https://example.com"></div>
+        <div class="form-group"><label>Founded Year</label><input type="number" id="cm-year" placeholder="2015"
+            min="1800" max="2030"></div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-ghost" onclick="closeModal('company-modal')">Cancel</button>
+        <button class="btn btn-success" onclick="saveCompany()">Save Company</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Candidate -->
+  <div class="overlay" id="candidate-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title" id="candidate-modal-title">Add Candidate</span>
+        <button class="modal-close" onclick="closeModal('candidate-modal')">✕</button>
+      </div>
+      <div class="form-grid">
+        <input type="hidden" id="cand-id">
+        <div class="form-group full"><label>Full Name *</label><input type="text" id="cand-name"
+            placeholder="Ali Hassan"></div>
+        <div class="form-group"><label>Email *</label><input type="email" id="cand-email" placeholder="ali@gmail.com">
+        </div>
+        <div class="form-group"><label>Phone</label><input type="text" id="cand-phone" placeholder="0301-1234567"></div>
+        <div class="form-group full"><label>Address</label><input type="text" id="cand-address"
+            placeholder="Block-5, Gulshan, Karachi"></div>
+        <div class="form-group"><label>Date of Birth</label><input type="date" id="cand-dob"></div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-ghost" onclick="closeModal('candidate-modal')">Cancel</button>
+        <button class="btn btn-success" onclick="saveCandidate()">Save Candidate</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Job -->
+  <div class="overlay" id="job-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title" id="job-modal-title">Add Job Posting</span>
+        <button class="modal-close" onclick="closeModal('job-modal')">✕</button>
+      </div>
+      <div class="form-grid">
+        <input type="hidden" id="jm-id">
+        <div class="form-group full"><label>Job Title *</label><input type="text" id="jm-title"
+            placeholder="Backend Developer"></div>
+        <div class="form-group"><label>Company *</label><select id="jm-company"></select></div>
+        <div class="form-group"><label>Employment Type *</label>
+          <select id="jm-type">
+            <option value="Full-Time">Full-Time</option>
+            <option value="Part-Time">Part-Time</option>
+            <option value="Contract">Contract</option>
+            <option value="Internship">Internship</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Salary Range</label><input type="text" id="jm-salary" placeholder="80k–120k PKR">
+        </div>
+        <div class="form-group"><label>Posted Date *</label><input type="date" id="jm-posted"></div>
+        <div class="form-group"><label>Deadline</label><input type="date" id="jm-deadline"></div>
+        <div class="form-group full"><label>Description</label><textarea id="jm-desc"
+            placeholder="Job description…"></textarea></div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-ghost" onclick="closeModal('job-modal')">Cancel</button>
+        <button class="btn btn-success" onclick="saveJob()">Save Job</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application -->
+  <div class="overlay" id="app-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title" id="app-modal-title">Add Application</span>
+        <button class="modal-close" onclick="closeModal('app-modal')">✕</button>
+      </div>
+      <div class="form-grid">
+        <input type="hidden" id="am-id">
+        <div class="form-group"><label>Candidate *</label><select id="am-candidate"></select></div>
+        <div class="form-group"><label>Job Posting *</label><select id="am-job"></select></div>
+        <div class="form-group"><label>Applied Date *</label><input type="date" id="am-date"></div>
+        <div class="form-group"><label>Status</label>
+          <select id="am-status">
+            <option value="Pending">Pending</option>
+            <option value="Reviewed">Reviewed</option>
+            <option value="Shortlisted">Shortlisted</option>
+            <option value="Rejected">Rejected</option>
+            <option value="Accepted">Accepted</option>
+          </select>
+        </div>
+        <div class="form-group full"><label>Cover Letter</label><textarea id="am-cover"
+            placeholder="Cover letter text…"></textarea></div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-ghost" onclick="closeModal('app-modal')">Cancel</button>
+        <button class="btn btn-success" onclick="saveApplication()">Save Application</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interview -->
+  <div class="overlay" id="interview-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title" id="interview-modal-title">Schedule Interview</span>
+        <button class="modal-close" onclick="closeModal('interview-modal')">✕</button>
+      </div>
+      <div class="form-grid">
+        <input type="hidden" id="iv-id">
+        <div class="form-group"><label>Application *</label><select id="iv-app"></select></div>
+        <div class="form-group"><label>Interviewer</label><select id="iv-ivr">
+            <option value="">— None —</option>
+          </select></div>
+        <div class="form-group"><label>Interview Type</label><input type="text" id="iv-type"
+            placeholder="Technical / HR Round"></div>
+        <div class="form-group"><label>Schedule Date *</label><input type="datetime-local" id="iv-date"></div>
+        <div class="form-group full"><label>Location / Link</label><input type="text" id="iv-loc"
+            placeholder="Office or meet link"></div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-ghost" onclick="closeModal('interview-modal')">Cancel</button>
+        <button class="btn btn-success" onclick="saveInterview()">Save Interview</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interviewer -->
+  <div class="overlay" id="interviewer-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title" id="interviewer-modal-title">Add Interviewer</span>
+        <button class="modal-close" onclick="closeModal('interviewer-modal')">✕</button>
+      </div>
+      <div class="form-grid">
+        <input type="hidden" id="ivr-id">
+        <div class="form-group full"><label>Full Name *</label><input type="text" id="ivr-name"
+            placeholder="Zara Malik"></div>
+        <div class="form-group"><label>Company *</label><select id="ivr-company"></select></div>
+        <div class="form-group"><label>Email *</label><input type="email" id="ivr-email" placeholder="zara@company.com">
+        </div>
+        <div class="form-group"><label>Department</label><input type="text" id="ivr-dept" placeholder="Engineering">
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-ghost" onclick="closeModal('interviewer-modal')">Cancel</button>
+        <button class="btn btn-success" onclick="saveInterviewer()">Save Interviewer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Offer -->
+  <div class="overlay" id="offer-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title" id="offer-modal-title">Create Offer</span>
+        <button class="modal-close" onclick="closeModal('offer-modal')">✕</button>
+      </div>
+      <div class="form-grid">
+        <input type="hidden" id="om-id">
+        <div class="form-group full"><label>Application *</label><select id="om-app"></select></div>
+        <div class="form-group"><label>Offered Salary (PKR)</label><input type="number" id="om-salary"
+            placeholder="105000"></div>
+        <div class="form-group"><label>Offer Date *</label><input type="date" id="om-date"></div>
+        <div class="form-group"><label>Expiry Date</label><input type="date" id="om-expiry"></div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-ghost" onclick="closeModal('offer-modal')">Cancel</button>
+        <button class="btn btn-success" onclick="saveOffer()">Save Offer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Decision -->
+  <div class="overlay" id="decision-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title" id="decision-modal-title">Add Hiring Decision</span>
+        <button class="modal-close" onclick="closeModal('decision-modal')">✕</button>
+      </div>
+      <div class="form-grid">
+        <input type="hidden" id="dm-id">
+        <div class="form-group"><label>Offer *</label><select id="dm-offer"></select></div>
+        <div class="form-group"><label>Decision *</label>
+          <select id="dm-decision">
+            <option value="Pending">Pending</option>
+            <option value="Hired">Hired</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Decision Date</label><input type="date" id="dm-date"></div>
+        <div class="form-group full"><label>Reason</label><textarea id="dm-reason"
+            placeholder="Reason for decision…"></textarea></div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-ghost" onclick="closeModal('decision-modal')">Cancel</button>
+        <button class="btn btn-success" onclick="saveDecision()">Save Decision</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Delete -->
+  <div class="overlay" id="confirm-modal">
+    <div class="modal" style="max-width:400px">
+      <div class="modal-header">
+        <span class="modal-title">Confirm Delete</span>
+        <button class="modal-close" onclick="closeModal('confirm-modal')">✕</button>
+      </div>
+      <p class="confirm-body">Are you sure you want to delete this record?</p>
+      <p class="confirm-warn">⚠ This may cascade to related records.</p>
+      <div class="form-actions">
+        <button class="btn btn-ghost" onclick="closeModal('confirm-modal')">Cancel</button>
+        <button class="btn btn-danger" id="confirm-delete-btn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast"></div>
+
+  <script>
+    // ═══════════════════════════════════════════════════════════
+    //  DATABASE
+    // ═══════════════════════════════════════════════════════════
+    const API_URL = 'api.php';
+    let db = {
+      companies: [],
+      candidates: [],
+      jobs: [],
+      applications: [],
+      interviewers: [],
+      interviews: [],
+      offers: [],
+      decisions: [],
+    };
+
+    async function apiCall(resource, action, data = {}) {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ resource, action, data })
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok || !json.ok) throw new Error(json.error || `API error (${res.status})`);
+      return json;
+    }
+
+    async function loadDb() {
+      const res = await fetch(`${API_URL}?action=init`, { cache: 'no-store' });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok || !json.ok) throw new Error(json.error || `API error (${res.status})`);
+      db = json.data;
+    }
+
+    // ── HELPERS ───────────────────────────────────────────────
+    const companyName = id => { const c = db.companies.find(x => x.id == id); return c ? c.name : 'N/A'; };
+    const candidateName = id => { const c = db.candidates.find(x => x.id == id); return c ? c.name : 'N/A'; };
+    const jobTitle = id => { const j = db.jobs.find(x => x.id == id); return j ? j.title : 'N/A'; };
+    const ivrName = id => { const i = db.interviewers.find(x => x.id == id); return i ? i.name : 'N/A'; };
+    const appLabel = id => { const a = db.applications.find(x => x.id == id); return a ? `App #${a.id} — ${candidateName(a.candidateId)}` : 'N/A'; };
+    const offerLabel = id => { const o = db.offers.find(x => x.id == id); return o ? `Offer #${o.id} — ${appLabel(o.appId)}` : 'N/A'; };
+
+    function statusBadge(s) {
+      const m = {
+        Pending: 'badge-amber', Reviewed: 'badge-blue', Shortlisted: 'badge-cyan',
+        Rejected: 'badge-red', Accepted: 'badge-green', Hired: 'badge-green'
+      };
+      return `<span class="badge ${m[s] || 'badge-gray'}">${s}</span>`;
+    }
+    function typeBadge(t) {
+      const m = { 'Full-Time': 'badge-green', 'Part-Time': 'badge-blue', 'Contract': 'badge-amber', 'Internship': 'badge-gray' };
+      return `<span class="badge ${m[t] || 'badge-gray'}">${t}</span>`;
+    }
+    function decisionBadge(d) {
+      const m = { Hired: 'badge-green', Rejected: 'badge-red', Pending: 'badge-amber' };
+      return `<span class="badge ${m[d] || 'badge-gray'}">${d}</span>`;
+    }
+    function idBadge(n) { return `<span class="badge badge-gray" style="font-family:var(--mono)">#${n}</span>`; }
+
+    // ── NAVIGATION ────────────────────────────────────────────
+    const sectionTitles = {
+      overview: 'Dashboard', companies: 'Companies', candidates: 'Candidates',
+      jobs: 'Job Postings', applications: 'Applications', interviews: 'Interviews',
+      interviewers: 'Interviewers', offers: 'Offers', decisions: 'Hiring Decisions'
+    };
+    const sectionTags = {
+      overview: 'OVERVIEW', companies: 'TABLE', candidates: 'TABLE', jobs: 'TABLE',
+      applications: 'TABLE', interviews: 'TABLE', interviewers: 'TABLE', offers: 'TABLE', decisions: 'TABLE'
+    };
+    let currentSection = 'overview';
+    let currentTableId = null;
+
+    function showSection(name, btn) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(t => t.classList.remove('active'));
+      document.getElementById('sec-' + name).classList.add('active');
+      if (btn) btn.classList.add('active');
+      currentSection = name;
+      document.getElementById('topbar-title').textContent = sectionTitles[name] || name;
+      document.getElementById('topbar-tag').textContent = sectionTags[name] || 'TABLE';
+
+      const tableMap = {
+        companies: 'company-table', candidates: 'candidate-table', jobs: 'job-table',
+        applications: 'app-table', interviews: 'interview-table', interviewers: 'interviewer-table',
+        offers: 'offer-table', decisions: 'decision-table'
+      };
+      currentTableId = tableMap[name] || null;
+      const sw = document.getElementById('topbar-search-wrap');
+      const si = document.getElementById('topbar-search-input');
+      if (currentTableId) {
+        sw.style.display = 'flex';
+        si.value = '';
+        filterTable(currentTableId, '');
+        si.placeholder = `Search ${sectionTitles[name].toLowerCase()}…`;
+      } else {
+        sw.style.display = 'none';
+      }
+      renderAll();
+    }
+
+    document.getElementById('topbar-search-input').addEventListener('input', function () {
+      if (currentTableId) filterTable(currentTableId, this.value);
+    });
+
+    // ── MODALS ────────────────────────────────────────────────
+    function openModal(id) {
+      const hidden = document.querySelector(`#${id} input[type=hidden]`);
+      if (hidden) hidden.value = '';
+      const titleEl = document.querySelector(`#${id} .modal-title`);
+      if (titleEl && titleEl.textContent.startsWith('Edit')) {
+        titleEl.textContent = titleEl.textContent.replace('Edit', 'Add');
+      }
+      populateDropdowns();
+      document.getElementById(id).classList.add('open');
+    }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+    document.querySelectorAll('.overlay').forEach(o => {
+      o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+    });
+
+    // ── TOAST ─────────────────────────────────────────────────
+    function toast(msg, type = 'success') {
+      const t = document.getElementById('toast');
+      const el = document.createElement('div');
+      el.className = `toast-item toast-${type}`;
+      el.textContent = msg;
+      t.appendChild(el);
+      setTimeout(() => { el.style.transition = 'opacity .3s'; el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 2800);
+    }
+
+    // ── FILTER ────────────────────────────────────────────────
+    function filterTable(tableId, q) {
+      const rows = document.querySelectorAll(`#${tableId} tbody tr`);
+      const ql = q.toLowerCase();
+      rows.forEach(r => r.style.display = r.textContent.toLowerCase().includes(ql) ? '' : 'none');
+    }
+
+    // ── DELETE CONFIRM ────────────────────────────────────────
+    let pendingDelete = null;
+    function confirmDelete(fn) { pendingDelete = fn; document.getElementById('confirm-modal').classList.add('open'); }
+    document.getElementById('confirm-delete-btn').onclick = () => {
+      if (pendingDelete) { pendingDelete(); pendingDelete = null; }
+      closeModal('confirm-modal');
+    };
+
+    // ═══════════════════════════════════════════════════════════
+    //  RENDER
+    // ═══════════════════════════════════════════════════════════
+    function renderAll() {
+      renderOverview(); renderCompanies(); renderCandidates(); renderJobs();
+      renderApplications(); renderInterviews(); renderInterviewers();
+      renderOffers(); renderDecisions(); updateNavBadges();
+    }
+
+    function updateNavBadges() {
+      document.getElementById('nb-companies').textContent = db.companies.length;
+      document.getElementById('nb-candidates').textContent = db.candidates.length;
+      document.getElementById('nb-jobs').textContent = db.jobs.length;
+      document.getElementById('nb-applications').textContent = db.applications.length;
+      document.getElementById('nb-interviews').textContent = db.interviews.length;
+      document.getElementById('nb-interviewers').textContent = db.interviewers.length;
+      document.getElementById('nb-offers').textContent = db.offers.length;
+      document.getElementById('nb-decisions').textContent = db.decisions.length;
+    }
+
+    function renderOverview() {
+      const hired = db.decisions.filter(d => d.decision === 'Hired').length;
+      const pending = db.applications.filter(a => a.status === 'Pending').length;
+
+      document.getElementById('overview-stats').innerHTML = `
+    <div class="stat-card blue"><div class="stat-label">Companies</div><div class="stat-value blue">${db.companies.length}</div><div class="stat-icon">🏢</div></div>
+    <div class="stat-card green"><div class="stat-label">Job Postings</div><div class="stat-value green">${db.jobs.length}</div><div class="stat-icon">📋</div></div>
+    <div class="stat-card amber"><div class="stat-label">Candidates</div><div class="stat-value amber">${db.candidates.length}</div><div class="stat-icon">👤</div></div>
+    <div class="stat-card cyan"><div class="stat-label">Applications</div><div class="stat-value cyan">${db.applications.length}</div><div class="stat-icon">📄</div></div>
+    <div class="stat-card blue"><div class="stat-label">Interviews</div><div class="stat-value blue">${db.interviews.length}</div><div class="stat-icon">🗓</div></div>
+    <div class="stat-card green"><div class="stat-label">Offers Sent</div><div class="stat-value green">${db.offers.length}</div><div class="stat-icon">📬</div></div>
+    <div class="stat-card green"><div class="stat-label">Hired</div><div class="stat-value green">${hired}</div><div class="stat-icon">✅</div></div>
+    <div class="stat-card amber"><div class="stat-label">Pending</div><div class="stat-value amber">${pending}</div><div class="stat-icon">⏳</div></div>
+  `;
+
+      const statuses = ['Pending', 'Reviewed', 'Shortlisted', 'Accepted', 'Rejected'];
+      const colors = ['#f59e0b', '#3b82f6', '#06b6d4', '#10b981', '#ef4444'];
+      document.getElementById('pipeline-list').innerHTML = statuses.map((s, i) => {
+        const count = db.applications.filter(a => a.status === s).length;
+        return `<div class="pipeline-step">
+      <div class="pipeline-dot" style="background:${colors[i]}"></div>
+      <span class="pipeline-label">${s}</span>
+      <span class="pipeline-count" style="color:${colors[i]}">${count}</span>
+    </div>`;
+      }).join('');
+
+      const recents = db.decisions.slice(-4).reverse();
+      document.getElementById('recent-decisions').innerHTML = recents.length ? recents.map(d => `
+    <div class="pipeline-step">
+      <div class="pipeline-dot" style="background:${d.decision === 'Hired' ? '#10b981' : d.decision === 'Rejected' ? '#ef4444' : '#f59e0b'}"></div>
+      <span class="pipeline-label" style="font-size:12px">${offerLabel(d.offerId)}</span>
+      ${decisionBadge(d.decision)}
+    </div>`).join('') : '<div class="empty-state" style="padding:20px"><div class="empty-text">No decisions yet</div></div>';
+    }
+
+    function emptyRow(cols, icon, msg) {
+      return `<tr><td colspan="${cols}"><div class="empty-state"><div class="empty-icon">${icon}</div><div class="empty-text">${msg}</div></div></td></tr>`;
+    }
+
+    function renderCompanies() {
+      const b = document.getElementById('company-body');
+      if (!db.companies.length) { b.innerHTML = emptyRow(7, '🏢', 'No companies yet'); return; }
+      b.innerHTML = db.companies.map(c => `<tr>
+    <td>${idBadge(c.id)}</td>
+    <td class="cell-primary">${c.name}</td>
+    <td>${c.industry || '—'}</td>
+    <td class="cell-mono">${c.location || '—'}</td>
+    <td>${c.website ? `<a href="${c.website}" class="cell-link" target="_blank">${c.website}</a>` : '—'}</td>
+    <td class="cell-mono">${c.year || '—'}</td>
+    <td><div class="td-actions">
+      <button class="btn btn-ghost btn-sm" onclick="editCompany(${c.id})">✏ Edit</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmDelete(()=>deleteCompany(${c.id}))">🗑 Delete</button>
+    </div></td>
+  </tr>`).join('');
+    }
+
+    function renderCandidates() {
+      const b = document.getElementById('candidate-body');
+      if (!db.candidates.length) { b.innerHTML = emptyRow(7, '👤', 'No candidates yet'); return; }
+      b.innerHTML = db.candidates.map(c => `<tr>
+    <td>${idBadge(c.id)}</td>
+    <td class="cell-primary">${c.name}</td>
+    <td class="cell-mono" style="font-size:12px">${c.email}</td>
+    <td class="cell-mono">${c.phone || '—'}</td>
+    <td>${c.address || '—'}</td>
+    <td class="cell-mono">${c.dob || '—'}</td>
+    <td><div class="td-actions">
+      <button class="btn btn-ghost btn-sm" onclick="editCandidate(${c.id})">✏ Edit</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmDelete(()=>deleteCandidate(${c.id}))">🗑 Delete</button>
+    </div></td>
+  </tr>`).join('');
+    }
+
+    function renderJobs() {
+      const b = document.getElementById('job-body');
+      if (!db.jobs.length) { b.innerHTML = emptyRow(8, '📋', 'No jobs yet'); return; }
+      b.innerHTML = db.jobs.map(j => `<tr>
+    <td>${idBadge(j.id)}</td>
+    <td>${companyName(j.companyId)}</td>
+    <td class="cell-primary">${j.title}</td>
+    <td>${typeBadge(j.type)}</td>
+    <td class="cell-mono">${j.salary || '—'}</td>
+    <td class="cell-mono">${j.posted}</td>
+    <td class="cell-mono">${j.deadline || '—'}</td>
+    <td><div class="td-actions">
+      <button class="btn btn-ghost btn-sm" onclick="editJob(${j.id})">✏ Edit</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmDelete(()=>deleteJob(${j.id}))">🗑 Delete</button>
+    </div></td>
+  </tr>`).join('');
+    }
+
+    function renderApplications() {
+      const b = document.getElementById('app-body');
+      if (!db.applications.length) { b.innerHTML = emptyRow(7, '📄', 'No applications yet'); return; }
+      b.innerHTML = db.applications.map(a => `<tr>
+    <td>${idBadge(a.id)}</td>
+    <td class="cell-primary">${candidateName(a.candidateId)}</td>
+    <td>${jobTitle(a.jobId)}</td>
+    <td class="cell-mono">${a.date}</td>
+    <td>${statusBadge(a.status)}</td>
+    <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:var(--text2)">${a.cover || '—'}</td>
+    <td><div class="td-actions">
+      <button class="btn btn-ghost btn-sm" onclick="editApplication(${a.id})">✏ Edit</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmDelete(()=>deleteApplication(${a.id}))">🗑 Delete</button>
+    </div></td>
+  </tr>`).join('');
+    }
+
+    function renderInterviews() {
+      const b = document.getElementById('interview-body');
+      if (!db.interviews.length) { b.innerHTML = emptyRow(7, '🗓', 'No interviews yet'); return; }
+      b.innerHTML = db.interviews.map(i => `<tr>
+    <td>${idBadge(i.id)}</td>
+    <td>${appLabel(i.appId)}</td>
+    <td>${i.ivrId ? ivrName(i.ivrId) : '—'}</td>
+    <td><span class="badge badge-cyan">${i.type || '—'}</span></td>
+    <td class="cell-mono" style="font-size:12px">${i.loc || '—'}</td>
+    <td class="cell-mono">${i.date || '—'}</td>
+    <td><div class="td-actions">
+      <button class="btn btn-ghost btn-sm" onclick="editInterview(${i.id})">✏ Edit</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmDelete(()=>deleteInterview(${i.id}))">🗑 Delete</button>
+    </div></td>
+  </tr>`).join('');
+    }
+
+    function renderInterviewers() {
+      const b = document.getElementById('interviewer-body');
+      if (!db.interviewers.length) { b.innerHTML = emptyRow(6, '👔', 'No interviewers yet'); return; }
+      b.innerHTML = db.interviewers.map(i => `<tr>
+    <td>${idBadge(i.id)}</td>
+    <td>${companyName(i.companyId)}</td>
+    <td class="cell-primary">${i.name}</td>
+    <td class="cell-mono" style="font-size:12px">${i.email}</td>
+    <td><span class="badge badge-blue">${i.dept || '—'}</span></td>
+    <td><div class="td-actions">
+      <button class="btn btn-ghost btn-sm" onclick="editInterviewer(${i.id})">✏ Edit</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmDelete(()=>deleteInterviewer(${i.id}))">🗑 Delete</button>
+    </div></td>
+  </tr>`).join('');
+    }
+
+    function renderOffers() {
+      const b = document.getElementById('offer-body');
+      if (!db.offers.length) { b.innerHTML = emptyRow(6, '📬', 'No offers yet'); return; }
+      b.innerHTML = db.offers.map(o => `<tr>
+    <td>${idBadge(o.id)}</td>
+    <td>${appLabel(o.appId)}</td>
+    <td class="cell-mono">${o.salary ? 'PKR ' + Number(o.salary).toLocaleString() : '—'}</td>
+    <td class="cell-mono">${o.date}</td>
+    <td class="cell-mono">${o.expiry || '—'}</td>
+    <td><div class="td-actions">
+      <button class="btn btn-ghost btn-sm" onclick="editOffer(${o.id})">✏ Edit</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmDelete(()=>deleteOffer(${o.id}))">🗑 Delete</button>
+    </div></td>
+  </tr>`).join('');
+    }
+
+    function renderDecisions() {
+      const b = document.getElementById('decision-body');
+      if (!db.decisions.length) { b.innerHTML = emptyRow(6, '✅', 'No decisions yet'); return; }
+      b.innerHTML = db.decisions.map(d => `<tr>
+    <td>${idBadge(d.id)}</td>
+    <td style="font-size:12px">${offerLabel(d.offerId)}</td>
+    <td>${decisionBadge(d.decision)}</td>
+    <td class="cell-mono">${d.date || '—'}</td>
+    <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:var(--text2)">${d.reason || '—'}</td>
+    <td><div class="td-actions">
+      <button class="btn btn-ghost btn-sm" onclick="editDecision(${d.id})">✏ Edit</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmDelete(()=>deleteDecision(${d.id}))">🗑 Delete</button>
+    </div></td>
+  </tr>`).join('');
+    }
+
+    // ── DROPDOWNS ─────────────────────────────────────────────
+    function populateSelect(elId, items, valKey, labelFn) {
+      const el = document.getElementById(elId);
+      el.innerHTML = items.map(i => `<option value="${i[valKey]}">${labelFn(i)}</option>`).join('');
+    }
+    function populateDropdowns() {
+      populateSelect('jm-company', db.companies, 'id', c => c.name);
+      populateSelect('am-candidate', db.candidates, 'id', c => c.name);
+      populateSelect('am-job', db.jobs, 'id', j => j.title);
+      populateSelect('iv-app', db.applications, 'id', a => `App #${a.id} — ${candidateName(a.candidateId)}`);
+      const ivrSel = document.getElementById('iv-ivr');
+      ivrSel.innerHTML = '<option value="">— None —</option>' + db.interviewers.map(i => `<option value="${i.id}">${i.name}</option>`).join('');
+      populateSelect('ivr-company', db.companies, 'id', c => c.name);
+      populateSelect('om-app', db.applications, 'id', a => `App #${a.id} — ${candidateName(a.candidateId)}`);
+      populateSelect('dm-offer', db.offers, 'id', o => `Offer #${o.id} — ${appLabel(o.appId)}`);
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  CRUD — COMPANY
+    // ═══════════════════════════════════════════════════════════
+    async function saveCompany() {
+      const id = document.getElementById('cm-id').value;
+      const obj = {
+        name: document.getElementById('cm-name').value.trim(),
+        industry: document.getElementById('cm-industry').value.trim(),
+        location: document.getElementById('cm-location').value.trim(),
+        website: document.getElementById('cm-website').value.trim(),
+        year: parseInt(document.getElementById('cm-year').value) || null,
+      };
+      if (!obj.name) { toast('Company name is required', 'error'); return; }
+      try {
+        if (id) {
+          await apiCall('companies', 'update', { id: parseInt(id), ...obj });
+          toast('Company updated ✓');
+        } else {
+          const r = await apiCall('companies', 'create', obj);
+          obj.id = r.id;
+          toast('Company added ✓');
+        }
+        await loadDb();
+        closeModal('company-modal'); renderAll();
+      } catch (e) { toast(e.message || 'Save failed', 'error'); }
+    }
+    function editCompany(id) {
+      const c = db.companies.find(x => x.id == id);
+      document.getElementById('cm-id').value = c.id;
+      document.getElementById('cm-name').value = c.name;
+      document.getElementById('cm-industry').value = c.industry || '';
+      document.getElementById('cm-location').value = c.location || '';
+      document.getElementById('cm-website').value = c.website || '';
+      document.getElementById('cm-year').value = c.year || '';
+      document.getElementById('company-modal-title').textContent = 'Edit Company';
+      document.getElementById('company-modal').classList.add('open');
+    }
+    async function deleteCompany(id) {
+      try {
+        await apiCall('companies', 'delete', { id });
+        await loadDb();
+        toast('Company deleted', 'info');
+        renderAll();
+      } catch (e) { toast(e.message || 'Delete failed', 'error'); }
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  CRUD — CANDIDATE
+    // ═══════════════════════════════════════════════════════════
+    async function saveCandidate() {
+      const id = document.getElementById('cand-id').value;
+      const obj = {
+        name: document.getElementById('cand-name').value.trim(),
+        email: document.getElementById('cand-email').value.trim(),
+        phone: document.getElementById('cand-phone').value.trim(),
+        address: document.getElementById('cand-address').value.trim(),
+        dob: document.getElementById('cand-dob').value,
+      };
+      if (!obj.name || !obj.email) { toast('Name and Email required', 'error'); return; }
+      try {
+        if (id) {
+          await apiCall('candidates', 'update', { id: parseInt(id), ...obj });
+          toast('Candidate updated ✓');
+        } else {
+          const r = await apiCall('candidates', 'create', obj);
+          obj.id = r.id;
+          toast('Candidate added ✓');
+        }
+        await loadDb();
+        closeModal('candidate-modal'); renderAll();
+      } catch (e) { toast(e.message || 'Save failed', 'error'); }
+    }
+    function editCandidate(id) {
+      const c = db.candidates.find(x => x.id == id);
+      document.getElementById('cand-id').value = c.id;
+      document.getElementById('cand-name').value = c.name;
+      document.getElementById('cand-email').value = c.email;
+      document.getElementById('cand-phone').value = c.phone || '';
+      document.getElementById('cand-address').value = c.address || '';
+      document.getElementById('cand-dob').value = c.dob || '';
+      document.getElementById('candidate-modal-title').textContent = 'Edit Candidate';
+      document.getElementById('candidate-modal').classList.add('open');
+    }
+    async function deleteCandidate(id) {
+      try {
+        await apiCall('candidates', 'delete', { id });
+        await loadDb();
+        toast('Candidate deleted', 'info');
+        renderAll();
+      } catch (e) { toast(e.message || 'Delete failed', 'error'); }
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  CRUD — JOB
+    // ═══════════════════════════════════════════════════════════
+    async function saveJob() {
+      const id = document.getElementById('jm-id').value;
+      const obj = {
+        companyId: parseInt(document.getElementById('jm-company').value),
+        title: document.getElementById('jm-title').value.trim(),
+        type: document.getElementById('jm-type').value,
+        salary: document.getElementById('jm-salary').value.trim(),
+        posted: document.getElementById('jm-posted').value,
+        deadline: document.getElementById('jm-deadline').value,
+        desc: document.getElementById('jm-desc').value.trim(),
+      };
+      if (!obj.title || !obj.posted) { toast('Title and Posted Date required', 'error'); return; }
+      try {
+        if (id) {
+          await apiCall('jobs', 'update', { id: parseInt(id), ...obj });
+          toast('Job updated ✓');
+        } else {
+          const r = await apiCall('jobs', 'create', obj);
+          obj.id = r.id;
+          toast('Job added ✓');
+        }
+        await loadDb();
+        closeModal('job-modal'); renderAll();
+      } catch (e) { toast(e.message || 'Save failed', 'error'); }
+    }
+    function editJob(id) {
+      const j = db.jobs.find(x => x.id == id);
+      populateDropdowns();
+      document.getElementById('jm-id').value = j.id;
+      document.getElementById('jm-title').value = j.title;
+      document.getElementById('jm-company').value = j.companyId;
+      document.getElementById('jm-type').value = j.type;
+      document.getElementById('jm-salary').value = j.salary || '';
+      document.getElementById('jm-posted').value = j.posted;
+      document.getElementById('jm-deadline').value = j.deadline || '';
+      document.getElementById('jm-desc').value = j.desc || '';
+      document.getElementById('job-modal-title').textContent = 'Edit Job Posting';
+      document.getElementById('job-modal').classList.add('open');
+    }
+    async function deleteJob(id) {
+      try {
+        await apiCall('jobs', 'delete', { id });
+        await loadDb();
+        toast('Job deleted', 'info');
+        renderAll();
+      } catch (e) { toast(e.message || 'Delete failed', 'error'); }
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  CRUD — APPLICATION
+    // ═══════════════════════════════════════════════════════════
+    async function saveApplication() {
+      const id = document.getElementById('am-id').value;
+      const obj = {
+        candidateId: parseInt(document.getElementById('am-candidate').value),
+        jobId: parseInt(document.getElementById('am-job').value),
+        date: document.getElementById('am-date').value,
+        status: document.getElementById('am-status').value,
+        cover: document.getElementById('am-cover').value.trim(),
+      };
+      if (!obj.date) { toast('Applied date required', 'error'); return; }
+      try {
+        if (id) {
+          await apiCall('applications', 'update', { id: parseInt(id), ...obj });
+          toast('Application updated ✓');
+        } else {
+          const r = await apiCall('applications', 'create', obj);
+          obj.id = r.id;
+          toast('Application added ✓');
+        }
+        await loadDb();
+        closeModal('app-modal'); renderAll();
+      } catch (e) { toast(e.message || 'Save failed', 'error'); }
+    }
+    function editApplication(id) {
+      const a = db.applications.find(x => x.id == id);
+      populateDropdowns();
+      document.getElementById('am-id').value = a.id;
+      document.getElementById('am-candidate').value = a.candidateId;
+      document.getElementById('am-job').value = a.jobId;
+      document.getElementById('am-date').value = a.date;
+      document.getElementById('am-status').value = a.status;
+      document.getElementById('am-cover').value = a.cover || '';
+      document.getElementById('app-modal-title').textContent = 'Edit Application';
+      document.getElementById('app-modal').classList.add('open');
+    }
+    async function deleteApplication(id) {
+      try {
+        await apiCall('applications', 'delete', { id });
+        await loadDb();
+        toast('Application deleted', 'info');
+        renderAll();
+      } catch (e) { toast(e.message || 'Delete failed', 'error'); }
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  CRUD — INTERVIEW
+    // ═══════════════════════════════════════════════════════════
+    async function saveInterview() {
+      const id = document.getElementById('iv-id').value;
+      const obj = {
+        appId: parseInt(document.getElementById('iv-app').value),
+        ivrId: parseInt(document.getElementById('iv-ivr').value) || null,
+        type: document.getElementById('iv-type').value.trim(),
+        date: document.getElementById('iv-date').value,
+        loc: document.getElementById('iv-loc').value.trim(),
+      };
+      if (!obj.date) { toast('Schedule date required', 'error'); return; }
+      try {
+        if (id) {
+          await apiCall('interviews', 'update', { id: parseInt(id), ...obj });
+          toast('Interview updated ✓');
+        } else {
+          const r = await apiCall('interviews', 'create', obj);
+          obj.id = r.id;
+          toast('Interview scheduled ✓');
+        }
+        await loadDb();
+        closeModal('interview-modal'); renderAll();
+      } catch (e) { toast(e.message || 'Save failed', 'error'); }
+    }
+    function editInterview(id) {
+      const i = db.interviews.find(x => x.id == id);
+      populateDropdowns();
+      document.getElementById('iv-id').value = i.id;
+      document.getElementById('iv-app').value = i.appId;
+      document.getElementById('iv-ivr').value = i.ivrId || '';
+      document.getElementById('iv-type').value = i.type || '';
+      document.getElementById('iv-date').value = i.date || '';
+      document.getElementById('iv-loc').value = i.loc || '';
+      document.getElementById('interview-modal-title').textContent = 'Edit Interview';
+      document.getElementById('interview-modal').classList.add('open');
+    }
+    async function deleteInterview(id) {
+      try {
+        await apiCall('interviews', 'delete', { id });
+        await loadDb();
+        toast('Interview deleted', 'info');
+        renderAll();
+      } catch (e) { toast(e.message || 'Delete failed', 'error'); }
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  CRUD — INTERVIEWER
+    // ═══════════════════════════════════════════════════════════
+    async function saveInterviewer() {
+      const id = document.getElementById('ivr-id').value;
+      const obj = {
+        companyId: parseInt(document.getElementById('ivr-company').value),
+        name: document.getElementById('ivr-name').value.trim(),
+        email: document.getElementById('ivr-email').value.trim(),
+        dept: document.getElementById('ivr-dept').value.trim(),
+      };
+      if (!obj.name || !obj.email) { toast('Name and Email required', 'error'); return; }
+      try {
+        if (id) {
+          await apiCall('interviewers', 'update', { id: parseInt(id), ...obj });
+          toast('Interviewer updated ✓');
+        } else {
+          const r = await apiCall('interviewers', 'create', obj);
+          obj.id = r.id;
+          toast('Interviewer added ✓');
+        }
+        await loadDb();
+        closeModal('interviewer-modal'); renderAll();
+      } catch (e) { toast(e.message || 'Save failed', 'error'); }
+    }
+    function editInterviewer(id) {
+      const i = db.interviewers.find(x => x.id == id);
+      populateDropdowns();
+      document.getElementById('ivr-id').value = i.id;
+      document.getElementById('ivr-name').value = i.name;
+      document.getElementById('ivr-company').value = i.companyId;
+      document.getElementById('ivr-email').value = i.email;
+      document.getElementById('ivr-dept').value = i.dept || '';
+      document.getElementById('interviewer-modal-title').textContent = 'Edit Interviewer';
+      document.getElementById('interviewer-modal').classList.add('open');
+    }
+    async function deleteInterviewer(id) {
+      try {
+        await apiCall('interviewers', 'delete', { id });
+        await loadDb();
+        toast('Interviewer deleted', 'info');
+        renderAll();
+      } catch (e) { toast(e.message || 'Delete failed', 'error'); }
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  CRUD — OFFER
+    // ═══════════════════════════════════════════════════════════
+    async function saveOffer() {
+      const id = document.getElementById('om-id').value;
+      const obj = {
+        appId: parseInt(document.getElementById('om-app').value),
+        salary: parseFloat(document.getElementById('om-salary').value) || null,
+        date: document.getElementById('om-date').value,
+        expiry: document.getElementById('om-expiry').value,
+      };
+      if (!obj.date) { toast('Offer date required', 'error'); return; }
+      try {
+        if (id) {
+          await apiCall('offers', 'update', { id: parseInt(id), ...obj });
+          toast('Offer updated ✓');
+        } else {
+          const r = await apiCall('offers', 'create', obj);
+          obj.id = r.id;
+          toast('Offer created ✓');
+        }
+        await loadDb();
+        closeModal('offer-modal'); renderAll();
+      } catch (e) { toast(e.message || 'Save failed', 'error'); }
+    }
+    function editOffer(id) {
+      const o = db.offers.find(x => x.id == id);
+      populateDropdowns();
+      document.getElementById('om-id').value = o.id;
+      document.getElementById('om-app').value = o.appId;
+      document.getElementById('om-salary').value = o.salary || '';
+      document.getElementById('om-date').value = o.date;
+      document.getElementById('om-expiry').value = o.expiry || '';
+      document.getElementById('offer-modal-title').textContent = 'Edit Offer';
+      document.getElementById('offer-modal').classList.add('open');
+    }
+    async function deleteOffer(id) {
+      try {
+        await apiCall('offers', 'delete', { id });
+        await loadDb();
+        toast('Offer deleted', 'info');
+        renderAll();
+      } catch (e) { toast(e.message || 'Delete failed', 'error'); }
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  CRUD — DECISION
+    // ═══════════════════════════════════════════════════════════
+    async function saveDecision() {
+      const id = document.getElementById('dm-id').value;
+      const obj = {
+        offerId: parseInt(document.getElementById('dm-offer').value),
+        decision: document.getElementById('dm-decision').value,
+        date: document.getElementById('dm-date').value,
+        reason: document.getElementById('dm-reason').value.trim(),
+      };
+      try {
+        if (id) {
+          await apiCall('decisions', 'update', { id: parseInt(id), ...obj });
+          toast('Decision updated ✓');
+        } else {
+          const r = await apiCall('decisions', 'create', obj);
+          obj.id = r.id;
+          toast('Decision recorded ✓');
+        }
+        await loadDb();
+        closeModal('decision-modal'); renderAll();
+      } catch (e) { toast(e.message || 'Save failed', 'error'); }
+    }
+    function editDecision(id) {
+      const d = db.decisions.find(x => x.id == id);
+      populateDropdowns();
+      document.getElementById('dm-id').value = d.id;
+      document.getElementById('dm-offer').value = d.offerId;
+      document.getElementById('dm-decision').value = d.decision;
+      document.getElementById('dm-date').value = d.date || '';
+      document.getElementById('dm-reason').value = d.reason || '';
+      document.getElementById('decision-modal-title').textContent = 'Edit Decision';
+      document.getElementById('decision-modal').classList.add('open');
+    }
+    async function deleteDecision(id) {
+      try {
+        await apiCall('decisions', 'delete', { id });
+        await loadDb();
+        toast('Decision deleted', 'info');
+        renderAll();
+      } catch (e) { toast(e.message || 'Delete failed', 'error'); }
+    }
+
+    // ── INIT ─────────────────────────────────────────────────
+    (async function init() {
+      try {
+        await loadDb();
+        renderAll();
+      } catch (e) {
+        toast((e && e.message) ? e.message : 'Failed to load database', 'error');
+      }
+    })();
+  </script>
+</body>
+
+</html>
